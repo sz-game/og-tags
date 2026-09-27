@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Tags Generator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      resize: vertical;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+    }
+
+    #output {
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      min-height: 430px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #222;
+    }
+
+    .copy {
+      background: #16a34a;
+      color: white;
+    }
+
+    #status {
+      margin-top: 12px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .example {
+      margin-top: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .example pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      color: #444;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        margin: 20px auto;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Meta Tags Generator</h1>
+
+    <p class="subtitle">
+      Meta Title, Meta Description aur URL paste karo. Tool automatically
+      Canonical, Facebook OG aur X/Twitter tags generate karega.
+    </p>
+
+    <div class="grid">
+
+      <div class="card">
+
+        <label for="input">Paste Content</label>
+
+        <textarea id="input" placeholder="Meta Title: Scientific Calculator – Trig, Logs, Powers & Roots
+
+Meta Description: Use the Scientific Calculator to evaluate trig functions, logarithms, roots, powers, factorials, exponentials, and constants in degree or radian mode.
+
+https://monkeymart-onlinefree.github.io/scientific-calculator/"></textarea>
+
+        <div class="buttons">
+          <button class="primary" id="generateBtn">
+            Generate Tags
+          </button>
+
+          <button class="secondary" id="clearBtn">
+            Clear
+          </button>
+        </div>
+
+        <div id="status">
+          Meta Title, Meta Description aur URL paste karein.
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <label for="output">Generated HTML</label>
+
+        <textarea id="output" readonly></textarea>
+
+        <div class="buttons">
+          <button class="copy" id="copyBtn">
+            Copy Code
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="example">
+      <strong>Supported Input:</strong>
+
+      <pre>
+Meta Title: BMI Calculator – Body Mass Index & Weight Range
+
+Meta Description: Calculate adult BMI from height and weight, view your CDC BMI category, healthy-weight range, BMI Prime, and Ponderal Index in metric or U.S. units.
+
+https://monkeymart-onlinefree.github.io/bmi-calculator/
+      </pre>
+    </div>
+
+  </div>
+
+
+<script>
+
+const input = document.getElementById("input");
+const output = document.getElementById("output");
+const generateBtn = document.getElementById("generateBtn");
+const clearBtn = document.getElementById("clearBtn");
+const copyBtn = document.getElementById("copyBtn");
+const status = document.getElementById("status");
+
+
+function cleanMarkdownURL(text) {
+
+  return text.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+    "$2"
+  );
+
+}
+
+
+function extractData(text) {
+
+  text = cleanMarkdownURL(text);
+
+  const titleMatch = text.match(
+    /\*{0,2}Meta\s*Title\*{0,2}\s*:\s*(.+)/i
+  );
+
+  const descriptionMatch = text.match(
+    /\*{0,2}Meta\s*Description\*{0,2}\s*:\s*(.+)/i
+  );
+
+  const urlMatch = text.match(
+    /https?:\/\/[^\s\]\)]+/i
+  );
+
+
+  let title = titleMatch
+    ? titleMatch[1].replace(/\*\*/g, "").trim()
+    : "";
+
+
+  let description = descriptionMatch
+    ? descriptionMatch[1].replace(/\*\*/g, "").trim()
+    : "";
+
+
+  let url = urlMatch
+    ? urlMatch[0].trim()
+    : "";
+
+
+  if (url && description.includes(url)) {
+
+    description = description
+      .replace(url, "")
+      .trim();
+
+  }
+
+
+  if (url && !url.endsWith("/")) {
+
+    url += "/";
+
+  }
+
+
+  return {
+    title,
+    description,
+    url
+  };
+
+}
+
+
+function escapeAttribute(text) {
+
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+}
+
+
+function escapeTitle(text) {
+
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+}
+
+
+function getSiteName(title) {
+
+  const separators = ["–", "—", "|"];
+
+  for (const separator of separators) {
+
+    if (title.includes(separator)) {
+
+      return title
+        .split(separator)[0]
+        .trim();
+
+    }
+
+  }
+
+  return title;
+
+}
+
+
+function generateTags() {
+
+  const data = extractData(input.value);
+
+
+  if (!data.title) {
+
+    status.textContent = "Meta Title nahi mila.";
+    output.value = "";
+    return;
+
+  }
+
+
+  if (!data.description) {
+
+    status.textContent = "Meta Description nahi mili.";
+    output.value = "";
+    return;
+
+  }
+
+
+  if (!data.url) {
+
+    status.textContent = "URL nahi mila.";
+    output.value = "";
+    return;
+
+  }
+
+
+  const titleAttr = escapeAttribute(data.title);
+  const titleTag = escapeTitle(data.title);
+  const description = escapeAttribute(data.description);
+  const url = escapeAttribute(data.url);
+
+  const siteName = escapeAttribute(
+    getSiteName(data.title)
+  );
+
+
+  const code =
+`<!-- Primary Meta Tags -->
+<title>${titleTag}</title>
+<meta name="title" content="${titleAttr}">
+<meta name="description" content="${description}">
+
+<!-- Canonical -->
+<link rel="canonical" href="${url}">
+
+<!-- Facebook / Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="${url}">
+<meta property="og:title" content="${titleAttr}">
+<meta property="og:description" content="${description}">
+<meta property="og:site_name" content="${siteName}">
+
+<!-- X / Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:url" content="${url}">
+<meta name="twitter:title" content="${titleAttr}">
+<meta name="twitter:description" content="${description}">`;
+
+
+  output.value = code;
+
+  status.textContent =
+    "Meta tags successfully generate ho gaye.";
+
+}
+
+
+generateBtn.addEventListener(
+  "click",
+  generateTags
+);
+
+
+clearBtn.addEventListener(
+  "click",
+  function() {
+
+    input.value = "";
+    output.value = "";
+
+    status.textContent =
+      "Meta Title, Meta Description aur URL paste karein.";
+
+    input.focus();
+
+  }
+);
+
+
+copyBtn.addEventListener(
+  "click",
+  async function() {
+
+    if (!output.value) {
+
+      status.textContent =
+        "Pehle tags generate karein.";
+
+      return;
+
+    }
+
+
+    try {
+
+      await navigator.clipboard.writeText(
+        output.value
+      );
+
+      status.textContent =
+        "Code copy ho gaya.";
+
+    }
+
+    catch {
+
+      output.select();
+
+      document.execCommand("copy");
+
+      status.textContent =
+        "Code copy ho gaya.";
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
